@@ -54,6 +54,12 @@ func (mq *MessageQueue) Send(data []byte, priority uint) error {
 	return mq_send(mq.handler, data, priority)
 }
 
+// UnsafeSend sends message to the message queue
+// no memory copy and directly convert the poiner from *byte to *char
+func (mq *MessageQueue) SendUnsafe(data []byte, priority uint) error {
+	return mq_send_unsafe(mq.handler, data, priority)
+}
+
 // TimedSend sends message to the message queue with a ceiling on the time for which the call will block.
 func (mq *MessageQueue) TimedSend(data []byte, priority uint, t time.Time) error {
 	return mq_timedsend(mq.handler, data, priority, t)

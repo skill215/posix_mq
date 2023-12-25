@@ -182,6 +182,18 @@ func mq_send(h int, data []byte, priority uint) error {
 	return nil
 }
 
+// unsafe version of mq_send, directly send the pointer of the buffer without copy
+func mq_send_unsafe(h int, data []byte, priority uint) error {
+	cStr := (*C.char)(unsafe.Pointer(&data[0])) // Direct conversion to C string pointer
+	defer C.free(unsafe.Pointer(cStr))          // Still need to free the C string
+
+	rv, err := C.mq_send(C.int(h), cStr, C.size_t(len(data)), C.uint(priority))
+	if rv == -1 {
+		return err
+	}
+	return nil
+}
+
 func mq_timedsend(h int, data []byte, priority uint, t time.Time) error {
 	timeSpec := timeToTimespec(t)
 	l := uint32(len(data))
