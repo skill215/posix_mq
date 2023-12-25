@@ -185,7 +185,7 @@ func mq_send(h int, data []byte, priority uint) error {
 // unsafe version of mq_send, directly send the pointer of the buffer without copy
 func mq_send_unsafe(h int, data []byte, priority uint) error {
 	cStr := (*C.char)(unsafe.Pointer(&data[0])) // Direct conversion to C string pointer
-	defer C.free(unsafe.Pointer(cStr))          // Still need to free the C string
+	// no need to free the cStr, because we don't have malloc the data, only pointer reinterpreting
 
 	rv, err := C.mq_send(C.int(h), cStr, C.size_t(len(data)), C.uint(priority))
 	if rv == -1 {
