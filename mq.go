@@ -56,7 +56,7 @@ func (mq *MessageQueue) Send(data []byte, priority uint) error {
 
 // UnsafeSend sends message to the message queue
 // no memory copy and directly convert the poiner from *byte to *char
-func (mq *MessageQueue) SendUnsafe(data []byte, priority uint) error {
+func (mq *MessageQueue) UnsafeSend(data []byte, priority uint) error {
 	return mq_send_unsafe(mq.handler, data, priority)
 }
 

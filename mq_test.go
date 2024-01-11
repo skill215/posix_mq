@@ -273,3 +273,59 @@ type TestMsg struct {
 	Length uint8
 	Data   [21]byte
 }
+
+func BenchmarkSendReceiveCycle(b *testing.B) {
+	// Initialize the message queue
+	queue, err := createMQ("/benchmark_queue", posix_mq.O_RDWR|posix_mq.O_CREAT, 10, 1024)
+	if err != nil {
+		b.Fatal("Failed to create message queue:", err)
+	}
+	defer queue.Close()
+
+	// Your message data and buffer (adjust as needed)
+	message := []byte("Hello, Benchmark!")
+
+	// Run the benchmark
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// Sending the message
+		err := queue.Send(message, 0)
+		if err != nil {
+			b.Fatal("Failed to send message:", err)
+		}
+
+		// Receiving the message
+		_, _, err = queue.Receive()
+		if err != nil {
+			b.Fatal("Failed to receive message:", err)
+		}
+	}
+}
+
+func BenchmarkUnsafeSendReceiveCycle(b *testing.B) {
+	// Initialize the message queue
+	queue, err := createMQ("/benchmark_unsafe_queue", posix_mq.O_RDWR|posix_mq.O_CREAT, 10, 1024)
+	if err != nil {
+		b.Fatal("Failed to create message queue:", err)
+	}
+	defer queue.Close()
+
+	// Your message data and buffer (adjust as needed)
+	message := []byte("Hello, Benchmark!")
+
+	// Run the benchmark
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// Sending the message
+		err := queue.UnsafeSend(message, 0)
+		if err != nil {
+			b.Fatal("Failed to send message:", err)
+		}
+
+		// Receiving the message
+		_, _, err = queue.UnsafeReceive()
+		if err != nil {
+			b.Fatal("Failed to receive message:", err)
+		}
+	}
+}
