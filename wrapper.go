@@ -296,9 +296,8 @@ func mq_close(h int) error {
 	rv, err := C.mq_close(C.int(h))
 	if rv == -1 {
 		return err
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func mq_unlink(name string) error {
@@ -311,7 +310,6 @@ func mq_unlink(name string) error {
 	rv, err := C.mq_unlink(cStr)
 	if rv == -1 {
 		return err
-	} else {
-		return nil
 	}
+	return nil
 }
